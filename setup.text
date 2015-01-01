@@ -1,0 +1,29 @@
+    1  df -h
+    2  startx
+    3  shutdown -h now
+    4  sudo shutdown -h now
+    5  shutdown -h now
+    6  sudo shutdown -h now
+    7  apt-get update
+    8  sudo -s
+    9  i2cdetect -y 0
+   10  i2cdetect -y 1
+   11  ll /dev/i*
+   12  ls -a
+   13  cat .bashrc
+   14  touch .bash_aliases
+   15  nano .bash_aliases 
+   16  ll
+   17  . .bash_aliases 
+   18  ll
+   19  less .bashrc
+   20  ll
+   21  ic2detect -y 0
+   22  i2cdetect -y 0
+   23  cat /etc/modules
+   24  nano /etc/modules
+   25  cat /etc/modules
+   26  nano /etc/modules
+   27  sudo -s
+   28  i2cdetect -y 0
+   29  history > setup

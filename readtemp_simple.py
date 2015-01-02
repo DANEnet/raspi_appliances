@@ -34,7 +34,7 @@ def get_temperature():
   last_valid = hex
   return c_to_f(t_c)
 
-filename = "temps"+time.strftime("%Y-%m-%dT%H-%M-%S.csv", time.localtime())
+filename = "temps"+time.strftime("%Y-%m-%dT%H-%M-%S.csv.git", time.localtime())
 outfile = open(filename, "w")
 while 1:
   t = 0.0

@@ -6,7 +6,9 @@ bus = smbus.SMBus(0)
 #print dir(bus)
 DEV_ADDR = 0x48
 DEV_REG_MODE = 0
-SAMP_PER_AVG = 6   #this times sleep time is seconds
+SAMP_PER_AVG = 6  # Number of samples in one measurement
+SAMP_PERIOD=10.0  # PERIOD is seconds
+                  # PERIOD * SAMPLES/Measurement = Interval between measurements 
 last_valid = 0x12345
 
 def c_to_f(in_temp):
@@ -34,15 +36,19 @@ def get_temperature():
   last_valid = hex
   return c_to_f(t_c)
 
-filename = "temps"+time.strftime("%Y-%m-%dT%H-%M-%S.csv.git", time.localtime())
+filename = "temps"+time.strftime("%Y-%m-%dT%H-%M-%S.tsv", time.localtime())
 outfile = open(filename, "w")
 while 1:
   t = 0.0
   for i in range(SAMP_PER_AVG):
     t += get_temperature()
-    time.sleep(10.0)
+    time.sleep(SAMP_PERIOD)
   timestamp = time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime())
   average_temp = t/float(SAMP_PER_AVG)
   print timestamp, average_temp
   outfile.write("%s\t%3.1f\n"%(timestamp, average_temp))
   outfile.flush()
+
+
+
+

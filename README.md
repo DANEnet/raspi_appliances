@@ -1,4 +1,4 @@
-server_monitor
+Raspi_appliances
 ==============
 
 The python for the server room monitor

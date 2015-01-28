@@ -87,7 +87,7 @@ elif (temp > alertMaximum):
         if(sendEmails):
             sendEmailSMTP('high temperature alert')
 else:
-    print('T1:'+str(temp))
+    print('T1: '+str(temp))
     if(not sendEmails):        # since we got a valid answer delete the error log
         os.remove('error_log.txt')
 

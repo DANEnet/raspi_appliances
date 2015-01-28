@@ -1,4 +1,5 @@
 temps*
 *.png
 password*
-
+readings*
+*.pyc

@@ -5,6 +5,7 @@ import os, os.path, glob, time, sys, datetime
 maxTry = 1000       # number of tries before it gives up on reading
 
 def read_temp_raw(): # function that grabs the raw temperature data from the sensors
+    device_file = "/sys/bus/w1/devices/28-000005aa893d/w1_slave"
     f = open(device_file, 'r') # the sensor appears as a file
     lines = f.readlines()      # this is a list of two lines
     f.close()
@@ -26,10 +27,10 @@ def read_2wire_temp(): # function that checks that the connection was good and p
 
     return temp
 
-main():
+def maintest():
   global maxTry
   maxTry = 1000       # number of tries before it gives up on reading
   print read_2wire_temp()
 
 if __name__ == "__main__":
-    main()
+    maintest()

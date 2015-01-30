@@ -8,7 +8,7 @@ def plotdata(dates,readings, filename):
   #        converters={ 0: mdates.strpdate2num('%Y-%m-%dT%H:%M:%S')})
   
   plt.plot_date(x=dates, y=readings, fmt="r-")
-  plt.title("Time vs Temp")
+  plt.title("Time vs Temp\nCreated"+time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()))
   plt.ylabel("Temp (F)")
   plt.grid(True)
   #plt.show()

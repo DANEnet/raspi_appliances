@@ -56,43 +56,50 @@ device_file = device_folder[0] + '/w1_slave'
 print "monitor_server: device_file",device_file
 
 
-outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())
+outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())+".csv"
 OUTFILE = open(outfilename, "w")
 
 ONEDAY = 24*60*60
-PLOT_INT = 15*60
+PLOT_INT = 5*60
 last_housekeeping = time.time() - ONEDAY  #force first pass to trigger
 last_plot = time.time() - ONEDAY  #force first pass to trigger
 #print time.time(), type(time.time)
-#last_day = time.strftime("%Y-%m-%d", time.localtime()-ONEDAY)
+last_day = time.strftime("%Y-%m-%d", time.localtime()-datetime.timedelta(days=1))
 readings = []
 dates = []
 
+###########################################
+#This is the main loop which cycles forever
+###########################################
 
 while 1:
-    reading = read_1wire_temp(device_file) #get the temp
-    readings.append(reading)
+    reading_c = read_1wire_temp(device_file) #get the temp
+    reading_f = reading*1.800 +32 #Change to farenheight
+    readings_f.append(reading_f)
     dates.append(datetime.datetime.now())
     
     output_str = "%s, %6.3f\n"%(time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
-                                           (reading*1.800 + 32))
+                                           (reading_f))
     print output_str
     OUTFILE.write(output_str)
     OUTFILE.flush()
-    check_alert(reading)
+    check_alert(reading_f)
 
     
     today_str=time.strftime("%Y-%m-%d", time.localtime())
     if (time.time() - last_plot) > PLOT_INT: 
-        plotdata(dates, readings, "/var/www/plot"+today_str)
-    
-    if (time.time() - last_housekeeping > ONEDAY): # and (today > last_day):
-        # daily tasks
-        readings=[]
+        plotdata(dates, readings_f, "/var/www/plot"+today_str+".png")
+        last_plot = time.time()
+        #overwrites all day then does new day
+    print "today_str:", today_str
+    print "last_day: ", last_day
+    if (today_str > last_day):
+        # daily tasks - Do this when day changes.
+        readings_f=[]
         dates = []
         last_day = today_str
         last_housekeeping = time.time()
-        outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())
+        outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())+".csv"
         OUTFILE.close()
         OUTFILE = open(outfilename, "w")
     

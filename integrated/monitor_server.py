@@ -57,15 +57,16 @@ print "monitor_server: device_file",device_file
 
 
 outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())+".csv"
-OUTFILE = open(outfilename, "w")
+OUTFILE = open(outfilename, "a") # lets append rather than truncate if it already exists
 
 ONEDAY = 24*60*60
 PLOT_INT = 5*60
 last_housekeeping = time.time() - ONEDAY  #force first pass to trigger
 last_plot = time.time() - ONEDAY  #force first pass to trigger
 #print time.time(), type(time.time)
-last_day = time.strftime("%Y-%m-%d", time.localtime()-datetime.timedelta(days=1))
-readings = []
+yesterday = datetime.datetime.today()-datetime.timedelta(days=1)
+last_day = yesterday.strftime("%Y-%m-%d")
+readings_f = []
 dates = []
 
 ###########################################
@@ -74,9 +75,9 @@ dates = []
 
 while 1:
     reading_c = read_1wire_temp(device_file) #get the temp
-    reading_f = reading*1.800 +32 #Change to farenheight
+    reading_f = reading_c*1.800 +32 #Change to farenheight
     readings_f.append(reading_f)
-    dates.append(datetime.datetime.now())
+    dates.append(datetime.datetime.today())
     
     output_str = "%s, %6.3f\n"%(time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
                                            (reading_f))
@@ -95,13 +96,14 @@ while 1:
     print "last_day: ", last_day
     if (today_str > last_day):
         # daily tasks - Do this when day changes.
+        del readings_f, dates
         readings_f=[]
         dates = []
         last_day = today_str
         last_housekeeping = time.time()
         outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())+".csv"
         OUTFILE.close()
-        OUTFILE = open(outfilename, "w")
+        OUTFILE = open(outfilename, "a") # again append if exists
     
-    time.sleep(60*5)
+    time.sleep(60*2)
 

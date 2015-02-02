@@ -22,7 +22,6 @@ from email.Encoders import encode_base64
 
 def sendMail(subject, text, *attachmentFilePaths):
   gmailUser = 'from_server@danenet.org'
-  gmailPassword = 'messag_2.Garcia'
   recipient = 'eric.howland@gmail.com'
   msg = MIMEMultipart()
   msg['From'] = gmailUser
@@ -34,7 +33,7 @@ def sendMail(subject, text, *attachmentFilePaths):
 
   mailServer = smtplib.SMTP_SSL('ASPMX.L.GOOGLE.COM', 465)
   #try:
-  #    mailServer = smtplib.SMTP('ASPMX.L.GOOGLE.COM', 587)
+  #    mailServer = smtplib.SMTP('ASPMX.L.GOOGLE.COM', 587)  <=== right port??
   #except:
   #    
   #    err = sys.exc_info()[0]
@@ -43,7 +42,7 @@ def sendMail(subject, text, *attachmentFilePaths):
   #      when the fallback is to try to make a IP6 connection which then
   #      fails with this error
   #    """, err
-  #    sys.exit("""Unable to connect to the mail server.  This is realy a IP6 error
+  #    sys.exit("""Unable to connect to the mail server.  This is likely a IP6 error
   #      but can be caused by a block on outgoing connections to SMPT servers
   #      when the fallback is to try to make a IP6 connection
   #    """)
@@ -82,7 +81,7 @@ def getAttachment(attachmentFilePath):
 
 def emailmain():
     global attachmentFilePaths
-    attachmentFilePaths = ["/home/pi/server_monitor/out.png"]
+    attachmentFilePaths = ["/var/www/"]
     
     sendMail("Test message from server",
              "the readings go here", *attachmentFilePaths)

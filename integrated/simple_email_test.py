@@ -13,19 +13,19 @@ def mail(receiver,Message):
     import smtplib
     try:
         s=smtplib.SMTP_SSL()
-	print "step 1b after smtplib"
+        print "step 1b after smtplib"
         s.connect("smtp.gmail.com",465)
-	print "step 1c after connect"
+        print "step 1c after connect"
         s.ehlo()
-	print "step 1d after ehlo"
+        print "step 1d after ehlo"
         s.starttls()
-	print "step 1e after starttls"
+        print "step 1e after starttls"
         s.ehlo()
-	print "step 2 after ehlo"
+        print "step 2 after ehlo"
         #s.login("email@gmail.com", "password")
-	s.login('from_server@danenet.org', 'messag_2.Garcia')
+        s.login('from_server@danenet.org', 'messag_2.Garcia')
         print "step 3 right before sendmail"
-	s.sendmail("from_server@danenet.org", receiver, Message)
+        s.sendmail("from_server@danenet.org", receiver, Message)
     except Exception,R:
             return R
 
@@ -34,3 +34,18 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+################################################# works
+#    print  "step 1", receiver, Message
+#    import smtplib
+#    try:
+#        s=smtplib.SMTP_SSL()
+#        s.connect("smtp.gmail.com",465)
+#        s.ehlo()
+#        s.starttls()
+#        s.ehlo()
+#        s.login('from_server@danenet.org', 'messag_2.Garcia')
+#        s.sendmail("from_server@danenet.org", receiver, Message)
+#    except Exception,R:
+#            return R
+#####################################################

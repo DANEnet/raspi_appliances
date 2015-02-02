@@ -11,6 +11,7 @@ maxTry = 1000       # number of tries before it gives up and sends an email
 
 from get_temp_1wire import *
 from plot_temp_date import *
+from sendemail import *
 # get the location of the DS18B20 in the system
 
 device_folder = glob.glob('/sys/bus/w1/devices/28*')

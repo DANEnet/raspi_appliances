@@ -10,51 +10,16 @@ and http://mail.python.org/pipermail/python-list/2003-September/225540.html
 """
 
 
-import os, sys
+import os, sys, datetime
 import smtplib
 import mimetypes
-import gmailPassword
+import gmail_password 
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
 from email.MIMEAudio import MIMEAudio
 from email.MIMEImage import MIMEImage
 from email.Encoders import encode_base64
-
-def sendMail(subject, text, *attachmentFilePaths):
-  gmailUser = 'from_server@danenet.org'
-  recipient = 'eric.howland@gmail.com'
-  msg = MIMEMultipart()
-  msg['From'] = gmailUser
-  msg['To'] = recipient
-  msg['Subject'] = subject
-  msg.attach(MIMEText(text))
-  for attachmentFilePath in attachmentFilePaths:
-    msg.attach(getAttachment(attachmentFilePath))
-
-  mailServer = smtplib.SMTP_SSL('ASPMX.L.GOOGLE.COM', 465)
-  #try:
-  #    mailServer = smtplib.SMTP('ASPMX.L.GOOGLE.COM', 587)
-  #except:
-  #    
-  #    err = sys.exc_info()[0]
-  #    print """Unable to connect to the mail server.  This is realy a IP6 error
-  #      but can be caused by a block on outgoing connections to SMPT servers
-  #      when the fallback is to try to make a IP6 connection which then
-  #      fails with this error
-  #    """, err
-  #    sys.exit("""Unable to connect to the mail server.  This is likely a IP6 error
-  #      but can be caused by a block on outgoing connections to SMPT servers
-  #      when the fallback is to try to make a IP6 connection
-  #    """)
-
-  mailServer.ehlo()
-  mailServer.starttls()
-  mailServer.ehlo()
-  mailServer.login(gmailUser, gmailPassword)
-  mailServer.sendmail(gmailUser, recipient, msg.as_string())
-  mailServer.close()
-  print('Sent email to %s' % recipient)
 
   
 def getAttachment(attachmentFilePath):
@@ -73,6 +38,9 @@ def getAttachment(attachmentFilePath):
     attachment = MIMEAudio(file.read(),_subType=subType)
   else:
     attachment = MIMEBase(mainType, subType)
+
+  file.close()
+  file = open(attachmentFilePath, 'rb')
   attachment.set_payload(file.read())
   encode_base64(attachment)
   file.close()
@@ -80,13 +48,55 @@ def getAttachment(attachmentFilePath):
   return attachment
 
 
+
+def sendMail(subject, text, *attachmentFilePaths):
+  print "starting sendmail"
+  gmailUser = 'from_server@danenet.org'
+  recipient = 'eric.howland@gmail.com'
+  msg = MIMEMultipart()
+  msg['From'] = gmailUser
+  msg['To'] = recipient
+  msg['Subject'] = subject
+  msg.attach(MIMEText(text))
+  for attachmentFilePath in attachmentFilePaths:
+    msg.attach(getAttachment(attachmentFilePath))
+
+  mailServer = smtplib.SMTP_SSL()
+  mailServer.set_debuglevel(9)
+  mailServer.connect("smtp.gmail.com", 465)
+  
+  #try:
+  #    mailServer = smtplib.SMTP('ASPMX.L.GOOGLE.COM', 587)
+  #except:
+  #    
+  #    err = sys.exc_info()[0]
+  #    print """Unable to connect to the mail server.  This is realy a IP6 error
+  #      but can be caused by a block on outgoing connections to SMPT servers
+  #      when the fallback is to try to make a IP6 connection which then
+  #      fails with this error
+  #    """, err
+  #    sys.exit("""Unable to connect to the mail server.  This is likely a IP6 error
+  #      but can be caused by a block on outgoing connections to SMPT servers
+  #      when the fallback is to try to make a IP6 connection
+  #    """)
+
+  mailServer.ehlo()
+  #mailServer.starttls()
+  #mailServer.ehlo()
+  mailServer.login(gmailUser, gmail_password.gmail_password())
+  mailServer.sendmail(gmailUser, recipient, msg.as_string())
+  mailServer.close()
+  print('Success?? Sent email to %s' % recipient)
+
 def emailmain():
-    global attachmentFilePaths
-    attachmentFilePaths = ["/var/www"]
-    
-    sendMail("Test message from server",
-             "the readings go here", *attachmentFilePaths)
+    #global attachmentFilePaths
+    attachmentFilePaths = ["/var/www/plot2015-02-03.png"]
+    now = datetime.datetime.today()
+    sendMail("Test message from server %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
+             "the readings go here %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
+             *attachmentFilePaths)
 
 if __name__ == "__main__":
+  
     emailmain()
 

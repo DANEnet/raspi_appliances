@@ -1,5 +1,5 @@
 temps*
 *.png
-password*
+*password*
 readings*
 *.pyc

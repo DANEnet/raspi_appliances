@@ -10,7 +10,9 @@ def plotdata(dates,readings, filename):
   
   plt.plot_date(x=dates, y=readings, fmt="r-")
   plt.xticks(rotation=22)
-  plt.title("Time vs Temp\nCreated "+time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+  plt.title("Time vs Temp\nCovers "+
+            dates[0].strftime("%Y-%m-%d %H:%M:%S ")+" to "+
+            dates[-1].strftime("%Y-%m-%d %H:%M:%S"))
   plt.ylabel("Temp (F)")
   plt.grid(True)
   #plt.show()

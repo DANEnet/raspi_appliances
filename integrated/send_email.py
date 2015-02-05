@@ -30,6 +30,8 @@ def getAttachment(attachmentFilePath):
   file = open(attachmentFilePath, 'rb')
   if mainType == 'text':
     attachment = MIMEText(file.read())
+  elif mainType == 'csv':
+    attachment = MIMEText(file.read())
   elif mainType == 'message':
     attachment = email.message_from_file(file)
   elif mainType == 'image':
@@ -49,7 +51,7 @@ def getAttachment(attachmentFilePath):
 
 
 
-def sendMail(subject, text, *attachmentFilePaths):
+def sendMail(subject, text, attachmentFilePaths):
   print "starting sendmail"
   gmailUser = 'from_server@danenet.org'
   recipient = 'eric.howland@gmail.com'

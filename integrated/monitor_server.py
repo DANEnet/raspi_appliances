@@ -23,7 +23,13 @@ def get_reading(device_file):
     return reading_c, reading_f
     
 
-
+def get_statistics(readings):
+  readings.sort()
+  min = readings[0]
+  max = readings[-1]
+  median = readings[int(len(readings)/2)]
+  return min, max, median
+    
 
 def check_alert(reading_in): #This is an iterator so variables are constant
     
@@ -108,11 +114,11 @@ while 1:
         now = datetime.datetime.today()
         send_email.sendMail("Test message from server %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
              "the readings go here %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
-             *attachmentFilePaths)
+             attachmentFilePaths)
 
         
-        readings_f=readings_f[:0]
-        dates = dates[:0]
+        readings_f=readings_f[0:0]
+        dates = dates[0:0]
         last_day = today_str
         last_housekeeping = time.time()
         OUTFILE.close()

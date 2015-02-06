@@ -16,4 +16,9 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 # reboot and use
 # lsmod  # should show these modules IF THE SENSORS ARE CONNECTED
 
+## if the sensor uses i2c connection needs
+# nano /etc/modules
+# sudo -s
+# i2cdetect -y 0
+
 

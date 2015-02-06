@@ -4,10 +4,13 @@ import os, os.path, glob, time, sys, datetime, smtplib
 global device_file
 
 # define some globals
+serverLocation = "CSCI "
 sendEmails = True   # send email when tolerance is exceeded or error occurs
-alertMaximum = 35   # max temperature (C) before alerting
-alertMinimum = 5    # min temperature (C) before alerting
+alertMaximum = 85   # max temperature (F) before alerting
+alertMinimum = 35    # min temperature (F) before alerting
 maxTry = 1000       # number of tries before it gives up and sends an email
+ONEDAY = 24*60*60
+PLOT_INT = 5*60
 
 from get_temp_1wire import *
 from plot_temp_date import *
@@ -31,29 +34,40 @@ def get_statistics(readings):
   return min, max, median
     
 
-def check_alert(reading_in): #This is an iterator so variables are constant
+def check_alert(reading_in_f ): #This is an iterator so dates preserve between constants
     
-    for dat in reading_in:    
-        if os.path.exists('error_log.txt'): # if we have an active error
-            sendEmails = False              # don't send another email
+    last_alert = datetime.datetime.today()-datetime.timedelta(days=1).timestamp()
+        ## start more than one day ago
+    
+    for dat in reading_in:
+        today = datetime.datetime.today().timestamp()
+        error_str = ""  ## clear each time through loop
 
         if (temp == -999):
-            if(sendEmails):
-                sendEmailSMTP('sensor error')
+            if(today - last_alert) > ONEDAY:
+                error_str = 'sensor error'
 
         elif (temp < alertMinimum):
-                if(sendEmails):
-                    sendEmailSMTP('low temperature alert')
+            if(today - last_alert) > ONEDAY:
+                error_str = "low temperature alert'
 
         elif (temp > alertMaximum):
-                if(sendEmails):
-                    sendEmailSMTP('high temperature alert')
-        else:
+             if(today - last_alert) > ONEDAY:
+                error_str='high temperature alert')
+                    
+        else: ## Server is OK
             print('T1:'+str(temp))
-            if(not sendEmails):        # since we got a valid answer delete the error log
-                os.remove('error_log.txt')
+            continue  ## get a new data point
+            
 
-                
+        message_subject = "ERROR from server %s %s at %s"% (serverLocation,
+                                                         error_str,
+                                                         serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S")
+        message_body = "\n\nMin Temp was: %6.2f F\n Max Temp was: %6.2f F\n Median Temp was: %6.2f F \n"%get_statistics(readings)  ## min, max, median
+        send_email.sendMail(message_subject,
+             now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
+             attachmentFilePaths)
+       
         yield dat  # this makes this function an iterator
 
 
@@ -74,8 +88,7 @@ today_str=time.strftime("%Y-%m-%d", time.localtime())
 last_plot_name = "/var/www/plot"+today_str+".png"
 OUTFILE = open(text_outfilename, "a") # lets append rather than truncate if it already exists
 
-ONEDAY = 24*60*60
-PLOT_INT = 5*60
+
 last_housekeeping = time.time() - ONEDAY  #force first pass to trigger
 last_plot = time.time() - ONEDAY  #force first pass to trigger by setting lat plot to one day ago"
 #print time.time(), type(time.time)
@@ -89,7 +102,7 @@ dates = []
 ###########################################
 
 while 1:
-    reading_c, reading_f = get_reading(device_file) 
+    reading_c, reading_f = get_reading(device_file)
     readings_f.append(reading_f)
     dates.append(datetime.datetime.today())
     
@@ -110,10 +123,14 @@ while 1:
     #### At the end of the day reset things
     if (today_str > last_day):
         # daily tasks - Do this when day changes.
-        attachmentFilePaths = [last_plot_name, text_outfilename ]
+        #attachmentFilePaths = [last_plot_name, text_outfilename ]
+        attachmentFilePaths = [last_plot_name] # raw csv data getting encoded
         now = datetime.datetime.today()
-        send_email.sendMail("Test message from server %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
-             "the readings go here %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
+
+        message_subject = "Update from server %s"% serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S"
+        message_body = "\n\nMin Temp was: %6.2f F\n Max Temp was: %6.2f F\n Median Temp was: %6.2f F \n"%get_statistics(readings)  ## min, max, median
+        send_email.sendMail(message_subject,
+             now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
              attachmentFilePaths)
 
         
@@ -145,6 +162,7 @@ while 1:
         last_plot = time.time()
         #overwrites all day then goes on to new day
 
+    readings_f.append(reading_f) # check and send email after plot
       
     
     time.sleep(60*2)

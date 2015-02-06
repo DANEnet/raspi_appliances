@@ -1,4 +1,0 @@
-nano /etc/modules
-sudo -s
-i2cdetect -y 0
-

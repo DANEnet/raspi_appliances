@@ -12,6 +12,7 @@ maxTry = 1000       # number of tries before it gives up and sends an email
 ONEDAY = 24*60*60
 PLOT_INT = 5*60
 
+
 from get_temp_1wire import *
 from plot_temp_date import *
 import send_email 
@@ -34,38 +35,43 @@ def get_statistics(readings):
   return min, max, median
     
 
-def check_alert(reading_in_f ): #This is an iterator so dates preserve between constants
-    
+def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between constants
+    global readings_f # [remove this is kludge maybe should be a class]
     last_alert = datetime.datetime.today()-datetime.timedelta(days=1).timestamp()
         ## start more than one day ago
-    
-    for dat in reading_in:
+    print "ChecK_alter info", reading_in_f
+    for dat in reading_in_f:
+        print "ChecK_alter_info loop: ", dat, last_alert
         today = datetime.datetime.today().timestamp()
         error_str = ""  ## clear each time through loop
 
-        if (temp == -999):
+        if (dat == -999):
             if(today - last_alert) > ONEDAY:
-                error_str = 'sensor error'
+                error_str = "sensor error"
 
-        elif (temp < alertMinimum):
+        elif (dat < alertMinimum):
             if(today - last_alert) > ONEDAY:
-                error_str = "low temperature alert'
+                error_str = "low temperature alert"
 
-        elif (temp > alertMaximum):
+        elif (dat > alertMaximum):
              if(today - last_alert) > ONEDAY:
-                error_str='high temperature alert')
+                error_str='high temperature alert'
                     
         else: ## Server is OK
-            print('T1:'+str(temp))
+            print('T1:'+str(dat))
             continue  ## get a new data point
             
 
-        message_subject = "ERROR from server %s %s at %s"% (serverLocation,
+        error_subject = "ERROR from server %s %s at %s"% (serverLocation,
                                                          error_str,
-                                                         serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S")
-        message_body = "\n\nMin Temp was: %6.2f F\n Max Temp was: %6.2f F\n Median Temp was: %6.2f F \n"%get_statistics(readings)  ## min, max, median
-        send_email.sendMail(message_subject,
-             now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
+                                                         serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S"))
+        error_body =  ("""\n\nMin Temp was: %6.2f F
+                        Max Temp was: %6.2f F\n
+                        Median Temp was: %6.2f F \n"""%
+                        get_statistics(readings_f))  ## min, max, median
+                                                            
+        send_email.sendMail(error_subject,
+             now.strftime("%Y-%m-%dT%H:%M:%S")+error_body,
              attachmentFilePaths)
        
         yield dat  # this makes this function an iterator
@@ -111,7 +117,7 @@ while 1:
     print output_str
     OUTFILE.write(output_str)
     OUTFILE.flush()
-    check_alert(reading_f)
+    
 
     
     today_str=time.strftime("%Y-%m-%d", time.localtime())
@@ -127,8 +133,10 @@ while 1:
         attachmentFilePaths = [last_plot_name] # raw csv data getting encoded
         now = datetime.datetime.today()
 
-        message_subject = "Update from server %s"% serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S"
-        message_body = "\n\nMin Temp was: %6.2f F\n Max Temp was: %6.2f F\n Median Temp was: %6.2f F \n"%get_statistics(readings)  ## min, max, median
+        message_subject = "Update from server %s"% serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S")
+        message_body = """\n\nMin Temp was: %6.2f F
+Max Temp was: %6.2f F
+Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
         send_email.sendMail(message_subject,
              now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
              attachmentFilePaths)
@@ -148,7 +156,7 @@ while 1:
        ##### Do a plot every so often    
     if (time.time() - last_plot) > PLOT_INT:
         #do not putout an empty graph at the start of the day
-        if len(readings_f) == 0:
+        if len(readings_f) == 0:  ## get 2 readings for at least some kind of graph.
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())
@@ -162,7 +170,8 @@ while 1:
         last_plot = time.time()
         #overwrites all day then goes on to new day
 
-    readings_f.append(reading_f) # check and send email after plot
+   
+    temp = check_4_alert(reading_f)# check and send email after plot
       
     
     time.sleep(60*2)

@@ -120,7 +120,7 @@ while 1:
     print "last_day: ", last_day
 
 
-    #### At the end of the day reset things
+    #### At the end of the day reset things send email
     if (today_str > last_day):
         # daily tasks - Do this when day changes.
         #attachmentFilePaths = [last_plot_name, text_outfilename ]
@@ -162,7 +162,6 @@ while 1:
         last_plot = time.time()
         #overwrites all day then goes on to new day
 
-    readings_f.append(reading_f) # check and send email after plot
       
     
     time.sleep(60*2)

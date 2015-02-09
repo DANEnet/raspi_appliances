@@ -8,10 +8,11 @@ serverLocation = "CSCI "
 sendEmails = True   # send email when tolerance is exceeded or error occurs
 alertMaximum = 85   # max temperature (F) before alerting
 alertMinimum = 35    # min temperature (F) before alerting
+alertHysteresis = 3  # how much recovery (beyond limit) do we need to clear alert (now using time)
 maxTry = 1000       # number of tries before it gives up and sends an email
 ONEDAY = 24*60*60
 PLOT_INT = 5*60
-SAMPLE_PERIOD = 2*60
+SAMPLE_PERIOD = 60*2
 
 
 from get_temp_1wire import *
@@ -37,12 +38,12 @@ def get_statistics(readings):
     
 
 def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between constants
-    global readings_f # [remove this is kludge maybe should be a class]
+    #global readings_f # [remove this is kludge maybe should be a class]
     last_alert = datetime.datetime.today()-datetime.timedelta(days=1).timestamp()
         ## start more than one day ago
     print "ChecK_alter info", reading_in_f
     for dat in reading_in_f:
-        print "ChecK_alter_info loop: ", dat, last_alert
+        print "Check_4_alert_info loop: ", dat, last_alert
         today = datetime.datetime.today().timestamp()
         error_str = ""  ## clear each time through loop
 
@@ -65,12 +66,13 @@ def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between
 
         error_subject = "ERROR from server %s %s at %s"% (serverLocation,
                                                          error_str,
-                                                         serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S"))
-        error_body =  ("""\n\nMin Temp was: %6.2f F
-                        Max Temp was: %6.2f F\n
-                        Median Temp was: %6.2f F \n"""%
-                        get_statistics(readings_f))  ## min, max, median
-                                                            
+                                                         serverLocation+now.strftime(" %Y-%m-%dT%H:%M:%S"))
+        #error_body =  ("""\n\nMin Temp was: %6.2f F
+        #                Max Temp was: %6.2f F\n
+        #                Median Temp was: %6.2f F \n"""%
+        #                get_statistics(readings_f))  ## min, max, median
+
+        error_body = "Temperature is: %6.2f"% reading_in_f                                                   
         send_email.sendMail(error_subject,
              now.strftime("%Y-%m-%dT%H:%M:%S")+error_body,
              attachmentFilePaths)
@@ -98,9 +100,12 @@ OUTFILE = open(text_outfilename, "a") # lets append rather than truncate if it a
 
 last_housekeeping = time.time() - ONEDAY  #force first pass to trigger
 last_plot = time.time() - ONEDAY  #force first pass to trigger by setting lat plot to one day ago"
-#print time.time(), type(time.time)
+
 yesterday = datetime.datetime.today()-datetime.timedelta(days=1)
 last_day = yesterday.strftime("%Y-%m-%d")
+last_clearance  = datetime.datetime.today()
+#last_day = yesterday.strftime("%H")
+
 readings_f = []
 dates = []
 
@@ -122,17 +127,19 @@ while 1:
 
     
     today_str=time.strftime("%Y-%m-%d", time.localtime())
+    #today_str=time.strftime("%H", time.localtime())
     
-    print "today_str:", today_str
-    print "last_day: ", last_day
+    #print "today_str:", today_str
+    #print "last_day: ", last_day
 
 
-    #### At the end of the day reset things send email
-    if (today_str > last_day):
+    #### At the end of the day reset things
+    #if (today_str > last_day):
+    if (datetime.datetime.now() - last_clearance).total_seconds() > (60*11):
         # daily tasks - Do this when day changes.
         #attachmentFilePaths = [last_plot_name, text_outfilename ]
         attachmentFilePaths = [last_plot_name] # raw csv data getting encoded
-        now = datetime.datetime.today()
+        last_clearance = now = datetime.datetime.today()
 
         message_subject = "Update from server %s"% serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S")
         message_body = """\n\nMin Temp was: %6.2f F
@@ -145,6 +152,7 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
         
         readings_f=readings_f[0:0]
         dates = dates[0:0]
+        print "after truncate lengths: ", len(readings_f), len(dates) 
         last_day = today_str
         last_housekeeping = time.time()
         OUTFILE.close()
@@ -157,14 +165,12 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
        ##### Do a plot every so often    
     if (time.time() - last_plot) > PLOT_INT:
         #do not putout an empty graph at the start of the day
-        if len(readings_f) == 0:  ## get 2 readings for at least some kind of graph.
+        while len(readings_f) < 2:  ## get 2 readings for at least some kind of graph.
+            time.sleep(SAMPLE_PERIOD)
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())
-            time.sleep( SAMPLE_PERIOD)
-            reading_c, reading_f = get_reading(device_file)
-            readings_f.append(reading_f)
-            dates.append(datetime.datetime.today())
+            
 
         last_plot_name = "/var/www/plot"+today_str+".png"
         plotdata(dates, readings_f, last_plot_name)
@@ -172,8 +178,8 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
         #overwrites all day then goes on to new day
 
    
-    temp = check_4_alert(reading_f)# check and send email after plot
+    temp = check_4_alert(reading_f)# check and potentialy send email after plot
       
     
-    time.sleep( SAMPLE_PERIOD)
+    time.sleep(60*2)
 

@@ -64,7 +64,7 @@ def sendMail(subject, text, attachmentFilePaths):
     msg.attach(getAttachment(attachmentFilePath))
 
   mailServer = smtplib.SMTP_SSL()
-  mailServer.set_debuglevel(9)
+  #mailServer.set_debuglevel(9)
   mailServer.connect("smtp.gmail.com", 465)
   
   #try:

@@ -11,6 +11,7 @@ alertMinimum = 35    # min temperature (F) before alerting
 maxTry = 1000       # number of tries before it gives up and sends an email
 ONEDAY = 24*60*60
 PLOT_INT = 5*60
+SAMPLE_PERIOD = 2*60
 
 
 from get_temp_1wire import *
@@ -126,7 +127,7 @@ while 1:
     print "last_day: ", last_day
 
 
-    #### At the end of the day reset things
+    #### At the end of the day reset things send email
     if (today_str > last_day):
         # daily tasks - Do this when day changes.
         #attachmentFilePaths = [last_plot_name, text_outfilename ]
@@ -160,7 +161,7 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())
-            time.sleep(60*2)
+            time.sleep( SAMPLE_PERIOD)
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())
@@ -174,5 +175,5 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
     temp = check_4_alert(reading_f)# check and send email after plot
       
     
-    time.sleep(60*2)
+    time.sleep( SAMPLE_PERIOD)
 

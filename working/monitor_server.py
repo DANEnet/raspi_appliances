@@ -11,6 +11,7 @@ alertMinimum = 35    # min temperature (F) before alerting
 maxTry = 1000       # number of tries before it gives up and sends an email
 ONEDAY = 24*60*60
 PLOT_INT = 5*60
+SAMPLE_PERIOD = 2*60
 
 from get_temp_1wire import *
 from plot_temp_date import *
@@ -49,11 +50,11 @@ def check_alert(reading_in_f ): #This is an iterator so dates preserve between c
 
         elif (temp < alertMinimum):
             if(today - last_alert) > ONEDAY:
-                error_str = "low temperature alert'
+                error_str = "low temperature alert"
 
         elif (temp > alertMaximum):
              if(today - last_alert) > ONEDAY:
-                error_str='high temperature alert')
+                error_str='high temperature alert'
                     
         else: ## Server is OK
             print('T1:'+str(temp))
@@ -152,7 +153,7 @@ while 1:
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())
-            time.sleep(60*2)
+            time.sleep( SAMPLE_PERIOD)
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())
@@ -164,5 +165,5 @@ while 1:
 
       
     
-    time.sleep(60*2)
+    time.sleep( SAMPLE_PERIOD)
 

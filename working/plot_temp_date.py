@@ -22,4 +22,10 @@ def main():
   plotdata()
 
 if __name__ == "__main__":
-    main()
+  filename = "plot_temp.png"
+  dates = []
+  readings_f = [82, 83,82,83]
+  for i in range(4)
+    dates.append(datetime.datetime.today())
+    time.sleep( 2)
+  plotdata(dates, readings_f, filename)

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.image as mpimg
 
+
 def plotdata(dates, readings_f, filename):
   #days, temp_f = np.loadtxt("/home/pi/server_monitor/temps2015-01-01T10:09:44", unpack=True,
   #        converters={ 0: mdates.strpdate2num('%Y-%m-%dT%H:%M:%S')})
@@ -21,16 +22,30 @@ def plotdata(dates, readings_f, filename):
   plt.grid(True)
   #plt.show()
   plt.savefig(filename)
+  plt.close()
 
-def main():
-  plotdata()
 
 if __name__ == "__main__":
   import datetime
   filename = "plot_temp.png"
   dates = []
-  readings_f = [82, 83,82,83]
-  for i in range(4):
+  readings_f = [] 
+
+  for i in range(6):
     dates.append(datetime.datetime.today())
+    readings_f.append(80+i*pow(-1,i))
     time.sleep( 2)
   plotdata(dates, readings_f, filename)
+  print "made_data 1",readings_f
+  readings_f= readings_f[0:0]
+  dates = dates[0:0]
+
+  print "clear data",readings_f
+  for i in range(6):
+      dates.append(datetime.datetime.today())
+      readings_f.append(90+i*pow(-1,i))
+      time.sleep( 2)
+  print "made_data 2",readings_f
+  plotdata(dates, readings_f, filename)
+  print "after second plot",readings_f
+  

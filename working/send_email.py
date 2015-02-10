@@ -27,6 +27,7 @@ def getAttachment(attachmentFilePath):
   if contentType is None or encoding is not None:
     contentType = 'application/octet-stream'
   mainType, subType = contentType.split('/', 1)
+
   file = open(attachmentFilePath, 'rb')
   if mainType == 'text':
     attachment = MIMEText(file.read())
@@ -90,15 +91,13 @@ def sendMail(subject, text, attachmentFilePaths):
   mailServer.close()
   print('Success?? Sent email to %s' % recipient)
 
-def emailmain():
+
+if __name__ == "__main__":  
+    emailmain()
     #global attachmentFilePaths
     attachmentFilePaths = ["/var/www/plot2015-02-03.png"]
     now = datetime.datetime.today()
     sendMail("Test message from server %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
              "the readings go here %s"%now.strftime("%Y-%m-%dT%H:%M:%S"),
              *attachmentFilePaths)
-
-if __name__ == "__main__":
-  
-    emailmain()
 

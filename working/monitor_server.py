@@ -104,7 +104,6 @@ last_plot = time.time() - ONEDAY  #force first pass to trigger by setting lat pl
 yesterday = datetime.datetime.today()-datetime.timedelta(days=1)
 last_day = yesterday.strftime("%Y-%m-%d")
 last_clearance  = datetime.datetime.today()
-#last_day = yesterday.strftime("%H")
 
 readings_f = []
 dates = []
@@ -127,15 +126,13 @@ while 1:
 
     
     today_str=time.strftime("%Y-%m-%d", time.localtime())
-    #today_str=time.strftime("%H", time.localtime())
     
-    #print "today_str:", today_str
-    #print "last_day: ", last_day
+    print "today_str:", today_str
+    print "last_day: ", last_day
 
 
     #### At the end of the day reset things
-    #if (today_str > last_day):
-    if (datetime.datetime.now() - last_clearance).total_seconds() > (60*11):
+    if (today_str > last_day):
         # daily tasks - Do this when day changes.
         #attachmentFilePaths = [last_plot_name, text_outfilename ]
         attachmentFilePaths = [last_plot_name] # raw csv data getting encoded
@@ -181,5 +178,5 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
     temp = check_4_alert(reading_f)# check and potentialy send email after plot
       
     
-    time.sleep(60*2)
+    time.sleep(SAMPLE_PERIOD)
 

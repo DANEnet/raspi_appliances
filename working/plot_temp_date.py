@@ -9,6 +9,8 @@ def plotdata(dates, readings_f, filename):
   #        converters={ 0: mdates.strpdate2num('%Y-%m-%dT%H:%M:%S')})
 
   print "in plotdata length readings_f: ", len(readings_f)
+  print "in plotdata length      dates: ", len(dates)
+
   
   plt.plot_date(x=dates, y=readings_f, fmt="r-")
   plt.xticks(rotation=22)
@@ -24,6 +26,7 @@ def main():
   plotdata()
 
 if __name__ == "__main__":
+  import datetime
   filename = "plot_temp.png"
   dates = []
   readings_f = [82, 83,82,83]

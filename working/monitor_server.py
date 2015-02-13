@@ -81,7 +81,6 @@ def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between
 
 
 
-
 ######################################
 # this is the top of the real program
 ######################################

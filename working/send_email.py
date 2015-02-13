@@ -55,7 +55,7 @@ def getAttachment(attachmentFilePath):
 def sendMail(subject, text, attachmentFilePaths):
   print "starting sendmail"
   gmailUser = 'from_server@danenet.org'
-  recipient = 'eric.howland@gmail.com'
+  recipient = 'angie@wingraschool.org'
   msg = MIMEMultipart()
   msg['From'] = gmailUser
   msg['To'] = recipient

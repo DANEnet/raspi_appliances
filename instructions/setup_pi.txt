@@ -2,6 +2,9 @@
 #after http://jartweb.net/blog/wp-content/uploads/2013/12/Raspberry-Pi-Logger-with-LCD.pdf
 #set up static IP
 #make a new user (not pi)
+
+apt-get --purge remove sonic-pi
+apt-get --purge remove minecraft
 apt-get update && sudo apt-get upgrade
 
 apt-get install apache2

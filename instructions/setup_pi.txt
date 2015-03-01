@@ -8,6 +8,10 @@
 #set up static IP
 #make a new user (not pi)
 
+#Change to get one-wire working again
+# http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=97216
+#
+
 apt-get --purge remove sonic-pi
 apt-get --purge remove minecraft
 deborphan -sz  # see what is orphaned

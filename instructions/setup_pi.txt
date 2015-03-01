@@ -1,3 +1,8 @@
+# Of course to be here you need to have imaged the pi 
+# and done
+# git clone https://github.com/DANEnet/server_monitor.git
+
+
 #instructions to setup pi
 #after http://jartweb.net/blog/wp-content/uploads/2013/12/Raspberry-Pi-Logger-with-LCD.pdf
 #set up static IP

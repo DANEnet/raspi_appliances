@@ -10,6 +10,8 @@
 
 apt-get --purge remove sonic-pi
 apt-get --purge remove minecraft
+deborphan -sz  # see what is orphaned
+apt-get remove --purge $(deborphan)
 apt-get update && sudo apt-get upgrade
 
 apt-get install apache2

@@ -4,21 +4,15 @@ import os, os.path, glob, time, sys, datetime, smtplib
 global device_file
 
 # define some globals
-serverLocation = "CSCI "
-sendEmails = True   # send email when tolerance is exceeded or error occurs
-alertMaximum = 85   # max temperature (F) before alerting
-alertMinimum = 35    # min temperature (F) before alerting
-alertHysteresis = 3  # how much recovery (beyond limit) do we need to clear alert (now using time)
-maxTry = 1000       # number of tries before it gives up and sends an email
 ONEDAY = 24*60*60
-PLOT_INT = 5*60
-SAMPLE_PERIOD = 60*2
 
 
 from get_temp_1wire import *
 from plot_temp_date import *
 import send_email 
-# get the location of the DS18B20 in the system
+import get_config
+
+config = get_config.get_config()
 
 device_folder = glob.glob('/sys/bus/w1/devices/28*')
 device_file = device_folder[0] + '/w1_slave'
@@ -159,10 +153,10 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
 
 
        ##### Do a plot every so often    
-    if (time.time() - last_plot) > PLOT_INT:
+    if (time.time() - last_plot) > config["PLOT_INT"]:
         #do not putout an empty graph at the start of the day
         while len(readings_f) < 2:  ## get 2 readings for at least some kind of graph.
-            time.sleep(SAMPLE_PERIOD)
+            time.sleep(config["SAMPLE_PERIOD"])
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())

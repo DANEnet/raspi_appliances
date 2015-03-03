@@ -8,9 +8,6 @@
 #set up static IP
 #make a new user (not pi)
 
-#Change to get one-wire working again
-# http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=97216
-# add to /boot/config.txt
 
 apt-get --purge remove sonic-pi
 apt-get --purge remove minecraft
@@ -30,8 +27,10 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 # reboot and use
 # lsmod  # should show these modules IF THE SENSORS ARE CONNECTED
 
-# The device tree way
-
+# The device tree way. needed with newer kernals
+# http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=97216
+# add to /boot/config.txt
+# add dtoverlay=w1-gpio,gpiopin=4
 
 ## if the sensor uses i2c connection needs
 # nano /etc/modules

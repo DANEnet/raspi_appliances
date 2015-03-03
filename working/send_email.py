@@ -11,6 +11,7 @@ and http://mail.python.org/pipermail/python-list/2003-September/225540.html
 
 
 import os, sys, datetime
+import get_config
 import smtplib
 import mimetypes
 import gmail_password 
@@ -54,15 +55,18 @@ def getAttachment(attachmentFilePath):
 
 def sendMail(subject, text, attachmentFilePaths):
   print "starting sendmail"
+  config = get_config.get_config()
   gmailUser = 'from_server@danenet.org'
   recipient = config["recipient"]
   msg = MIMEMultipart()
   msg['From'] = gmailUser
   msg['To'] = recipient
   msg['Subject'] = subject
-  msg.attach(MIMEText(text))
-  for attachmentFilePath in attachmentFilePaths:
-    msg.attach(getAttachment(attachmentFilePath))
+  print attachmentFilePaths
+  if len(attachmentFilePaths):
+    msg.attach(MIMEText(text))
+    for attachmentFilePath in attachmentFilePaths:
+      msg.attach(getAttachment(attachmentFilePath))
 
   mailServer = smtplib.SMTP_SSL()
   #mailServer.set_debuglevel(9)

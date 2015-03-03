@@ -1,6 +1,6 @@
 # this file is adapted from http://jartweb.net/blog/wp-content/uploads/2013/12/Raspberry-Pi-Logger-with-LCD.pdf
 
-import os, os.path
+import os, os.path, glob
 maxTry = 1000       # number of tries before it gives up on reading
 
 def read_temp_raw(device_file): # function that grabs the raw temperature data from the sensors
@@ -28,7 +28,10 @@ def read_1wire_temp(device_file): # function that checks that the connection was
 def maintest():
   global maxTry
   maxTry = 1000       # number of tries before it gives up on reading
-  print read_2wire_temp()
+  device_folder = glob.glob('/sys/bus/w1/devices/28*')
+  device_file = device_folder[0] + '/w1_slave'
+
+  print read_1wire_temp(device_file)
 
 if __name__ == "__main__":
     maintest()

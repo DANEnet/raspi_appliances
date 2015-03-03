@@ -10,7 +10,7 @@
 
 #Change to get one-wire working again
 # http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=97216
-#
+# add to /boot/config.txt
 
 apt-get --purge remove sonic-pi
 apt-get --purge remove minecraft

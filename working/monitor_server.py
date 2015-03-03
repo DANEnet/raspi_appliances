@@ -116,8 +116,6 @@ while 1:
     OUTFILE.write(output_str)
     OUTFILE.flush()
     
-
-    
     today_str=time.strftime("%Y-%m-%d", time.localtime())
     
     print "today_str:", today_str
@@ -128,16 +126,19 @@ while 1:
     if (today_str > last_day):
         # daily tasks - Do this when day changes.
         #attachmentFilePaths = [last_plot_name, text_outfilename ]
-        attachmentFilePaths = [last_plot_name] # raw csv data getting encoded
+        if os.path.isfile(last_plot_name):       # do not try to attach if it does not exist
+          attachmentFilePaths = [last_plot_name] # raw csv data getting encoded
+        else:
+          attachmentFilePaths = []
         last_clearance = now = datetime.datetime.today()
 
-        message_subject = "Update from server %s"% serverLocation+now.strftime("%Y-%m-%dT%H:%M:%S")
+        message_subject = "Update from server %s"% config["serverLocation"]+now.strftime("%Y-%m-%dT%H:%M:%S")
         message_body = """\n\nMin Temp was: %6.2f F
 Max Temp was: %6.2f F
 Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
-        send_email.sendMail(message_subject,
-             now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
-             attachmentFilePaths)
+#        send_email.sendMail(message_subject,
+#             now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
+#             attachmentFilePaths)
 
         
         readings_f=readings_f[0:0]
@@ -171,5 +172,5 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
     temp = check_4_alert(reading_f)# check and potentialy send email after plot
       
     
-    time.sleep(SAMPLE_PERIOD)
+    time.sleep(config["SAMPLE_PERIOD"])
 

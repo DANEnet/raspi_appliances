@@ -10,6 +10,8 @@ def get_config():
   config["PLOT_INT"] = 5*60
   config["SAMPLE_PERIOD"] = 60*2
   config["recipient"] = "eric.howland@gmail.com"
+  config["log_rotate_days"] = 30
+  config["web_path"] = "/var/www/"  # expects to have final /
 #  config[""] = 
   
   

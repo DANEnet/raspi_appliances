@@ -21,7 +21,23 @@ def get_reading(device_file):
     reading_c = read_1wire_temp(device_file) #get the temp
     reading_f = reading_c*1.800 +32 #Change to farenheight
     return reading_c, reading_f
-    
+
+def daily(config):
+  days = config["log_rotate_days"]
+  filepath = config["web_path"]
+  reports = glob.glob(os.path.join(filepath, "report*"))
+  plots = glob.glob(os.path.join(filepath, "plot*"))
+  
+  reports.sort()
+  plots.sort()
+  
+  reports = reports[:days]
+  plots = plots[:days]  
+  
+  for plot in plots: 
+    os.remove(plot)
+  for report in reports:
+    os.remove(plot)
 
 def get_statistics(readings):
   readings.sort()
@@ -126,7 +142,7 @@ while 1:
     if (today_str > last_day):
         # daily tasks - Do this when day changes.
         #attachmentFilePaths = [last_plot_name, text_outfilename ]
-        if os.path.isfile(last_plot_name):       # do not try to attach if it does not exist
+        if os.path.isfile(last_plot_name):       # do not try to attach  if it does not exist
           attachmentFilePaths = [last_plot_name] # raw csv data getting encoded
         else:
           attachmentFilePaths = []
@@ -151,6 +167,7 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
         text_outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())+".csv"
         OUTFILE = open(text_outfilename, "a") # again append if exists
         today_str=time.strftime("%Y-%m-%d", time.localtime())
+        daily(config)
 
 
        ##### Do a plot every so often    

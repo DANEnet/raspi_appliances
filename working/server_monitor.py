@@ -25,20 +25,23 @@ def get_reading(device_file):
 def daily(config):
   days = config["log_rotate_days"]
   filepath = config["web_path"]
-  reports = glob.glob(os.path.join(filepath, "report*"))
+  print days, filepath
+  readings = glob.glob(os.path.join(filepath, "readings*"))
   plots = glob.glob(os.path.join(filepath, "plot*"))
   
-  reports.sort()
-  plots.sort()
-  
-  reports = reports[:days]
-  plots = plots[:days]  
+  readings.sort(reverse=True)
+  plots.sort(reverse=True)
+  #print "pre", readings, plots
+  readings = readings[days:]
+  plots = plots[days:]  
+  #print "post truncate",readings, plots
   
   for plot in plots: 
     os.remove(plot)
-  for report in reports:
-    os.remove(plot)
+  for readings_file in readings:
+    os.remove(readings_file)
 
+  
 def get_statistics(readings):
   readings.sort()
   min = readings[0]
@@ -101,10 +104,6 @@ device_file = device_folder[0] + '/w1_slave'
 print "monitor_server: device_file",device_file
 
 
-text_outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())+".csv"
-today_str=time.strftime("%Y-%m-%d", time.localtime())
-last_plot_name = "/var/www/plot"+today_str+".png"
-OUTFILE = open(text_outfilename, "a") # lets append rather than truncate if it already exists
 
 
 last_housekeeping = time.time() - ONEDAY  #force first pass to trigger
@@ -116,12 +115,18 @@ last_clearance  = datetime.datetime.today()
 
 readings_f = []
 dates = []
-
+OUTFILE = False
 ###########################################
 #This is the main loop which cycles forever
 ###########################################
 
 while 1:
+    today_str=time.strftime("%Y-%m-%d", time.localtime())
+    text_outfilename="/var/www/readings"+today_str+".csv"
+    last_plot_name = "/var/www/plot"+today_str+".png"
+    if not(OUTFILE) or not(os.path.isfile(text_outfilename)):
+        OUTFILE = open(text_outfilename, "a") # lets append rather than truncate if it already exists
+    
     reading_c, reading_f = get_reading(device_file)
     readings_f.append(reading_f)
     dates.append(datetime.datetime.today())
@@ -130,7 +135,7 @@ while 1:
                                            reading_f, reading_c)
     print output_str
     OUTFILE.write(output_str)
-    OUTFILE.flush()
+    #OUTFILE.flush()
     
     today_str=time.strftime("%Y-%m-%d", time.localtime())
     

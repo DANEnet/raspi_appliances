@@ -9,7 +9,7 @@ def get_config():
   config["maxTry"] = 1000       # number of tries before it gives up and sends an email
   config["PLOT_INT"] = 5*60
   config["SAMPLE_PERIOD"] = 60*2
-  config["recipient"] = "eric.howland@gmail.com"
+  config["recipient"] = "meberly@danenet.org"
   config["log_rotate_days"] = 30
   config["web_path"] = "/var/www/"  # expects to have final /
 #  config[""] = 

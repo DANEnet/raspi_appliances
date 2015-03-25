@@ -177,6 +177,9 @@ Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
 
        ##### Do a plot every so often    
     if (time.time() - last_plot) > config["PLOT_INT"]:
+    	OUTFILE.flush() # strike a balance between every write and waiting f
+			#for the buffer to fill - more than half a day
+ 
         #do not putout an empty graph at the start of the day
         while len(readings_f) < 2:  ## get 2 readings for at least some kind of graph.
             time.sleep(config["SAMPLE_PERIOD"])

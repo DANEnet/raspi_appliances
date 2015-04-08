@@ -54,7 +54,9 @@ def getAttachment(attachmentFilePath):
 
 
 def sendMail(subject, text, attachmentFilePaths):
-  print "starting sendmail"
+  print ("starting sendmail subject: ",subject)
+  print ("\ttext: ", text)
+  print ("\tAttachmentFilePaths:",attachmentFilePaths)
   config = get_config.get_config()
   gmailUser = 'from_server@danenet.org'
   recipient = config["recipient"]
@@ -62,7 +64,6 @@ def sendMail(subject, text, attachmentFilePaths):
   msg['From'] = gmailUser
   msg['To'] = recipient
   msg['Subject'] = subject
-  print attachmentFilePaths
   if len(attachmentFilePaths):
     msg.attach(MIMEText(text))
     for attachmentFilePath in attachmentFilePaths:

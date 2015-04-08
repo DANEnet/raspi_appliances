@@ -113,17 +113,21 @@ yesterday = datetime.datetime.today()-datetime.timedelta(days=1)
 last_day = yesterday.strftime("%Y-%m-%d")
 last_clearance  = datetime.datetime.today()
 
+today_str=time.strftime("%Y-%m-%d", time.localtime())
+text_outfilename="/var/www/readings"+today_str+".csv"
+last_plot_name = "/var/www/plot"+today_str+".png"
+
+
+
 readings_f = []
 dates = []
 OUTFILE = False
+
 ###########################################
 #This is the main loop which cycles forever
 ###########################################
 
 while 1:
-    today_str=time.strftime("%Y-%m-%d", time.localtime())
-    text_outfilename="/var/www/readings"+today_str+".csv"
-    last_plot_name = "/var/www/plot"+today_str+".png"
     if not(OUTFILE) or not(os.path.isfile(text_outfilename)):
         OUTFILE = open(text_outfilename, "a") # lets append rather than truncate if it already exists
     
@@ -174,6 +178,7 @@ Median Temp was: %6.1f F """%(mint, maxt, mediant)
         text_outfilename="/var/www/readings"+time.strftime("%Y-%m-%d", time.localtime())+".csv"
         OUTFILE = open(text_outfilename, "a") # again append if exists
         today_str=time.strftime("%Y-%m-%d", time.localtime())
+
         daily(config)
 
 

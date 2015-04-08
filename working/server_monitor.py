@@ -66,11 +66,11 @@ def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between
 
         elif (dat < alertMinimum):
             if(today - last_alert) > ONEDAY:
-                error_str = "low temperature alert"
+                error_str = "low temperature alert %6.1f F"%reading_in_f
 
         elif (dat > alertMaximum):
              if(today - last_alert) > ONEDAY:
-                error_str='high temperature alert'
+                error_str='high temperature alert %6.1f F"%reading_in_f'
                     
         else: ## Server is OK
             print('T1:'+str(dat))
@@ -79,13 +79,13 @@ def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between
 
         error_subject = "ERROR from server %s %s at %s"% (serverLocation,
                                                          error_str,
-                                                         serverLocation+now.strftime(" %Y-%m-%dT%H:%M:%S"))
+                                                         serverLocation+now.strftime(" %Y-%m-%dT%H:%M:%S"),)
         #error_body =  ("""\n\nMin Temp was: %6.2f F
         #                Max Temp was: %6.2f F\n
         #                Median Temp was: %6.2f F \n"""%
         #                get_statistics(readings_f))  ## min, max, median
 
-        error_body = "Temperature is: %6.2f"% reading_in_f                                                   
+        error_body = "Temperature is: %6.1f"% reading_in_f                                                   
         send_email.sendMail(error_subject,
              now.strftime("%Y-%m-%dT%H:%M:%S")+error_body,
              attachmentFilePaths)
@@ -131,7 +131,7 @@ while 1:
     readings_f.append(reading_f)
     dates.append(datetime.datetime.today())
     
-    output_str = "%s, %6.3f, %6.3f\n"%(time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
+    output_str = "%s, %6.1f, %6.1f\n"%(time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
                                            reading_f, reading_c)
     print output_str
     OUTFILE.write(output_str)
@@ -153,13 +153,15 @@ while 1:
           attachmentFilePaths = []
         last_clearance = now = datetime.datetime.today()
 
+	(mint, maxt, mediant) = get_statistics(readings_f)
         message_subject = "Update from server %s"% config["serverLocation"]+now.strftime("%Y-%m-%dT%H:%M:%S")
-        message_body = """\n\nMin Temp was: %6.2f F
-Max Temp was: %6.2f F
-Median Temp was: %6.2f F """%get_statistics(readings_f)  ## min, max, median
-#        send_email.sendMail(message_subject,
-#             now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
-#             attachmentFilePaths)
+	message_subject = message_subject + " Max Temp %6.2f F"%maxt
+        message_body = """\n\nMin Temp was: %6.1f F
+Max Temp was: %6.1f F
+Median Temp was: %6.1f F """%(mint, maxt, mediant)
+        send_email.sendMail(message_subject,
+             now.strftime("%Y-%m-%dT%H:%M:%S")+message_body,
+             attachmentFilePaths)
 
         
         readings_f=readings_f[0:0]

@@ -4,3 +4,4 @@ temps*
 readings*
 *.pyc
 nohup*
+*.backup

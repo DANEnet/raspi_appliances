@@ -95,6 +95,7 @@ def sendMail(subject, text, attachmentFilePaths):
     mailServer.login(gmailUser, gmail_password.gmail_password())
     mailServer.sendmail(gmailUser, recipient, msg.as_string())
   except: 
+    err = sys.exc_info()[0]
     print('Failure in sending email to %s \n %s' % (recipient, err))
   mailServer.close()
   

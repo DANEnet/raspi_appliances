@@ -13,7 +13,40 @@
 #passwd
 #
 #set up static IP
-#make a new user (not pi)
+#			We need root privileges, so we use sudo:
+#
+#	 		pi@raspberry:sudo vi /etc/network/interfaces
+#			In the interfaces file look for a line such as:
+#
+#			iface eth0 inet dhcp
+#			This is to enable the DHCP client. You do not want this to work any more.
+#     Put a hash at the beginning of the line to disable it or delete it:
+#
+#			In the file you must insert the following lines:
+#
+#			  # The loopback interface
+#			  auto lo
+#			  iface lo inet loopback
+#			  auto eth0
+#			  iface eth0 inet static
+#			  #your static IP
+#			  address 192.168.1.118  
+#			  #your gateway IP
+#			  gateway 192.168.1.1
+#			  netmask 255.255.255.0
+#			  #your network address "family"
+#			  network 192.168.1.0
+#			  broadcast 192.168.1.255
+#			Only the address and netmask data are strictly required.
+#			You now need to restart the network:
+#
+#			 pi@raspberry:sudo /etc/init.d/networking restart
+#
+#
+#
+
+
+#make a new user (not pi) or just set a new password (from raspi-config if you are using that).
 
 
 apt-get --purge remove sonic-pi

@@ -62,7 +62,7 @@ apt-get install python-rpi.gpio
 apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 
 
-# DATED****
+# DATED**** DO NOT USE
 # modules for etc/modules
 #  snd-bcm2835
 #  w1-gpio
@@ -70,21 +70,22 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 # reboot and use
 # lsmod  # should show these modules IF AND ONLY IF THE SENSORS ARE CONNECTED
 
-# The device tree way. needed with newer kernals
+# The device tree way. needed with newer kernals - Use This
 # http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=97216
 # add to /boot/config.txt
 # add dtoverlay=w1-gpio,gpiopin=4
 
 #Add this into /etc/rc.local
 #
-#FILE = /home/pi/server_monitor/working/server_monitor.sh
-#echo "Starting server_monitor"
-#if [-f $FILE]
-#	echo "Starting server_monitor ($FILE)"
-#	$FILE &
-#else
-#	echo "Did not find $FILE"
-#fi
+#no spaces around = sign
+# FILE=/home/pi/server_monitor/working/server_monitor.sh
+# echo "Starting server_monitor"
+# if [-f $FILE]
+# 	echo "Starting server_monitor ($FILE)"
+# 	$FILE &
+# else
+# 	echo "Did not find $FILE"
+# fi
 
 ## if the sensor uses i2c connection needs
 # nano /etc/modules

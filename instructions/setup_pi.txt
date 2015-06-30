@@ -81,6 +81,7 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 # FILE=/home/pi/server_monitor/working/server_monitor.sh
 # echo "Starting server_monitor"
 # if [-f $FILE]
+# then
 # 	echo "Starting server_monitor ($FILE)"
 # 	$FILE &
 # else

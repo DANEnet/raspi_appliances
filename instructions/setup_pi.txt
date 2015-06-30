@@ -78,15 +78,19 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 #Add this into /etc/rc.local
 #
 #no spaces around = sign
-# FILE=/home/pi/server_monitor/working/server_monitor.sh
-# echo "Starting server_monitor"
-# if [-f $FILE]
-# then
-# 	echo "Starting server_monitor ($FILE)"
-# 	$FILE &
-# else
-# 	echo "Did not find $FILE"
-# fi
+# this does not work just put in the file with the & i.e. 
+#
+# /home/pi/server_monitor/working/server_monitor.sh &
+#
+#xxx FILE=/home/pi/server_monitor/working/server_monitor.sh
+#xxx echo "Starting server_monitor"
+#xxx  if [-f $FILE]
+#xxx  then
+#xxx  	echo "Starting server_monitor ($FILE)"
+#xxx  	$FILE &
+#xxx  else
+#xxx  	echo "Did not find $FILE"
+#xxx  fi
 
 ## if the sensor uses i2c connection needs
 # nano /etc/modules

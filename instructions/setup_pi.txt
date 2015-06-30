@@ -1,6 +1,7 @@
 # Of course to be here you need to have imaged the pi 
 # and done
 # git clone https://github.com/DANEnet/server_monitor.git
+# move the bash_aliases scripts to the pi and root directories
 # and maybe run raspi-config 
 
 #instructions to setup pi

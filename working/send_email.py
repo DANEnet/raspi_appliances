@@ -88,13 +88,16 @@ def sendMail(subject, text, attachmentFilePaths):
   #      when the fallback is to try to make a IP6 connection
   #    """)
 
-  mailServer.ehlo()
-  #mailServer.starttls()
-  #mailServer.ehlo()
-  mailServer.login(gmailUser, gmail_password.gmail_password())
-  mailServer.sendmail(gmailUser, recipient, msg.as_string())
+  try:
+    mailServer.ehlo()
+    #mailServer.starttls()
+    #mailServer.ehlo()
+    mailServer.login(gmailUser, gmail_password.gmail_password())
+    mailServer.sendmail(gmailUser, recipient, msg.as_string())
+  except: 
+    print('Failure in sending email to %s \n %s' % (recipient, err))
   mailServer.close()
-  print('Success?? Sent email to %s' % recipient)
+  
 
 
 if __name__ == "__main__":  

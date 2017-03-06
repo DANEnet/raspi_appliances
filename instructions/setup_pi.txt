@@ -40,6 +40,40 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 # http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=97216
 # add to /boot/config.txt
 # add dtoverlay=w1-gpio,gpiopin=4
+# This did NOT work
+#   device_tree=bcm2708-rpi-b.dtb
+#   device_tree_overlay=overlays/w1-gpio-overlay.dtb
+#   device_tree_overlay=overlays/w1-gpio-pullup-overlay.dtb
+#  At least with the dtoverlay=w1-gpio,gpiopin=4
+
+
+
+
+# Try this from command line
+#    #   echo 7 > /sys/class/gpio/export
+#    #   echo high > /sys/class/gpio/gpio7/direction
+
+### or from python 
+#    import RPi.GPIO as GPIO
+#    GPIO.setmode(GPIO.BCM)
+#    GPIO.setup(23, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+#    GPIO.setup(24, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+#
+#    This will enable a pull-down resistor on pin 23, and a pull-up resistor on pin 24. 
+
+
+
+# for moving the onewire pin
+# add to /boot/config.txt
+# bcm2708.w1_gpio_pin=8
+# as well as changing the dtoverlay pin
+
+=======
+# Try this from command line
+#   echo 7 > /sys/class/gpio/export
+#   echo high > /sys/class/gpio/gpio7/direction 
+>>>>>>> External Changes
+
 
 #Add this into /etc/rc.local
 #

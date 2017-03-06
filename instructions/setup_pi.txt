@@ -1,6 +1,7 @@
 # Of course to be here you need to have imaged the pi 
 # and done
 # git clone https://github.com/DANEnet/server_monitor.git
+# move the bash_aliases scripts to the pi and root directories
 # and maybe run raspi-config 
 
 #instructions to setup pi
@@ -13,14 +14,48 @@
 #passwd
 #
 #set up static IP
-#make a new user (not pi)
+#			We need root privileges, so we use sudo:
+#
+#	 		pi@raspberry:sudo vi /etc/network/interfaces
+#			In the interfaces file look for a line such as:
+#
+#			iface eth0 inet dhcp
+#			This is to enable the DHCP client. You do not want this to work any more.
+#     Put a hash at the beginning of the line to disable it or delete it:
+#
+#			In the file you must insert the following lines:
+#
+#			  # The loopback interface
+#			  auto lo
+#			  iface lo inet loopback
+#			  auto eth0
+#			  iface eth0 inet static
+#			  #your static IP
+#			  address 192.168.1.118  
+#			  #your gateway IP
+#			  gateway 192.168.1.1
+#			  netmask 255.255.255.0
+#			  #your network address "family"
+#			  network 192.168.1.0
+#			  broadcast 192.168.1.255
+#			Only the address and netmask data are strictly required.
+#			You now need to restart the network:
+#
+#			 pi@raspberry:sudo /etc/init.d/networking restart
+#
+#
+#
+
+
+#make a new user (not pi) or just set a new password (from raspi-config if you are using that).
 
 
 apt-get --purge remove sonic-pi
 apt-get --purge remove minecraft
-deborphan -sz  # see what is orphaned
-apt-get remove --purge $(deborphan)
+#deborphan -sz  # see what is orphaned
+#apt-get remove --purge $(deborphan)
 apt-get update && sudo apt-get upgrade
+apt-get autoremove
 
 apt-get install apache2
 apt-get install python-matplotlib
@@ -28,15 +63,15 @@ apt-get install python-rpi.gpio
 apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 
 
-# DATED****
+# DATED**** DO NOT USE
 # modules for etc/modules
 #  snd-bcm2835
 #  w1-gpio
 #  w1-therm
 # reboot and use
-# lsmod  # should show these modules IF THE SENSORS ARE CONNECTED
+# lsmod  # should show these modules IF AND ONLY IF THE SENSORS ARE CONNECTED
 
-# The device tree way. needed with newer kernals
+# The device tree way. needed with newer kernals - Use This
 # http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=97216
 # add to /boot/config.txt
 # add dtoverlay=w1-gpio,gpiopin=4
@@ -77,14 +112,20 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 
 #Add this into /etc/rc.local
 #
-#FILE = /home/pi/server_monitor/working/server_monitor.sh
-#echo "Starting server_monitor"
-#if [-f $FILE]
-#	echo "Starting server_monitor ($FILE)"
-#	$FILE &
-#else
-#	echo "Did not find $FILE"
-#fi
+#no spaces around = sign
+# this does not work just put in the file with the & i.e. 
+#
+# /home/pi/server_monitor/working/server_monitor.sh &
+#
+#xxx FILE=/home/pi/server_monitor/working/server_monitor.sh
+#xxx echo "Starting server_monitor"
+#xxx  if [-f $FILE]
+#xxx  then
+#xxx  	echo "Starting server_monitor ($FILE)"
+#xxx  	$FILE &
+#xxx  else
+#xxx  	echo "Did not find $FILE"
+#xxx  fi
 
 ## if the sensor uses i2c connection needs
 # nano /etc/modules
@@ -92,3 +133,8 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 # i2cdetect -y 0
 
 
+#setup gmail_password.py
+#def gmail_password():
+#  return "password goes here"
+
+#

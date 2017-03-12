@@ -1,6 +1,6 @@
 # this file is adapted from http://jartweb.net/blog/wp-content/uploads/2013/12/Raspberry-Pi-Logger-with-LCD.pdf
 
-import os, os.path, glob
+import os, os.path, glob, time
 maxTry = 1000       # number of tries before it gives up on reading
 
 def read_temp_raw(device_file): # function that grabs the raw temperature data from the sensors
@@ -12,12 +12,13 @@ def read_temp_raw(device_file): # function that grabs the raw temperature data f
 def read_1wire_temp(device_file): # function that checks that the connection was good and pulls out the temperature
     lines = read_temp_raw(device_file)
     numTry = 0
+
     while lines[0].strip()[-3:] != 'YES' and numTry < maxTry: # loop until we get a valid response
         time.sleep(0.5)
-        lines = read_temp_raw()  # try again
+        lines = read_temp_raw(device_file)  # try again
         numTry += 1
 
-    if numTry != maxTry:                   # if we have not exceeded maxTry
+    if numTry != maxTry:                   # if we have not exceeded max try to read
         equals_pos = lines[1].find('t=')
         temp = float(lines[1][equals_pos+2:])/1000
     else:

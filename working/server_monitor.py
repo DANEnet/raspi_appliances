@@ -3,16 +3,23 @@
 import os, os.path, glob, time, sys, datetime, smtplib
 global device_file
 
+
 # define some globals
 ONEDAY = 24*60*60
 
 
 from get_temp_1wire import *
 from plot_temp_date import *
+from display_LCD import *
+
 import send_email 
 import get_config
+import  Adafruit_CharLCD as LCD
 
-config = get_config.get_config()
+
+
+#####config_dict = get_config.get_config()
+## see:  https://docs.python.org/2/faq/programming.html?highlight=global%20variables#how-do-i-share-global-variables-across-modules
 
 device_folder = glob.glob('/sys/bus/w1/devices/28*')
 device_file = device_folder[0] + '/w1_slave'
@@ -22,9 +29,9 @@ def get_reading(device_file):
     reading_f = reading_c*1.800 +32 #Change to farenheight
     return reading_c, reading_f
 
-def daily(config):
-  days = config["log_rotate_days"]
-  filepath = config["web_path"]
+def daily():
+  days = get_config.config["log_rotate_days"]
+  filepath = get_config.config["web_path"]
   print days, filepath
   readings = glob.glob(os.path.join(filepath, "readings*"))
   plots = glob.glob(os.path.join(filepath, "plot*"))
@@ -95,11 +102,12 @@ def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between
 
 
 ######################################
-# this is the top of the real program
+# this is the top of the real program with setup
 ######################################
 
 device_folder = glob.glob('/sys/bus/w1/devices/28*')
 device_file = device_folder[0] + '/w1_slave'
+##remove lcd = LCD.Adafruit_CharLCDPlate()
 
 print "monitor_server: device_file",device_file
 
@@ -116,6 +124,12 @@ last_clearance  = datetime.datetime.today()
 today_str=time.strftime("%Y-%m-%d", time.localtime())
 text_outfilename="/var/www/readings"+today_str+".csv"
 last_plot_name = "/var/www/plot"+today_str+".png"
+
+GPIO.setmode(GPIO.BCM)
+for pin in [6]:
+	print "Setting pin ",pin, " high"
+	GPIO.setup(pin, GPIO.OUT)
+	GPIO.output(pin, GPIO.HIGH)
 
 
 
@@ -137,11 +151,21 @@ while 1:
     
     output_str = "%s, %6.1f, %6.1f\n"%(time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
                                            reading_f, reading_c)
+   
+    ## remove lcd.set_color(1.0, 1.0, 1.0)
+    ## remove lcd.clear()
+    ## remove lcd.message('%6.1f, %6.1f'%(reading_f, reading_c))
+ 
     print output_str
     OUTFILE.write(output_str)
     #OUTFILE.flush()
+
+    display_time=time.strftime("%Y-%m-%d %I:%M %p", time.localtime())
+    display_LCD(display_time, reading_c, reading_f)
+    
     
     today_str=time.strftime("%Y-%m-%d", time.localtime())
+    
     
     print "today_str:", today_str
     print "last_day: ", last_day
@@ -158,7 +182,7 @@ while 1:
         last_clearance = now = datetime.datetime.today()
 
 	(mint, maxt, mediant) = get_statistics(readings_f)
-        message_subject = "Update from server %s"% config["serverLocation"]+now.strftime("%Y-%m-%dT%H:%M:%S")
+        message_subject = "Update from server %s"% get_config.config["serverLocation"]+now.strftime("%Y-%m-%dT%H:%M:%S")
 	message_subject = message_subject + " Max Temp %6.2f F"%maxt
         message_body = """\n\nMin Temp was: %6.1f F
 Max Temp was: %6.1f F
@@ -170,7 +194,6 @@ Median Temp was: %6.1f F """%(mint, maxt, mediant)
         
         readings_f=readings_f[0:0]
         dates = dates[0:0]
-        print "after truncate lengths: ", len(readings_f), len(dates) 
         last_day = today_str
         last_housekeeping = time.time()
         OUTFILE.close()
@@ -179,24 +202,24 @@ Median Temp was: %6.1f F """%(mint, maxt, mediant)
         OUTFILE = open(text_outfilename, "a") # again append if exists
         today_str=time.strftime("%Y-%m-%d", time.localtime())
 
-        daily(config)
+        daily()
 
 
        ##### Do a plot every so often    
-    if (time.time() - last_plot) > config["PLOT_INT"]:
+    if (time.time() - last_plot) > get_config.config["PLOT_INT"]:
     	OUTFILE.flush() # strike a balance between every write and waiting f
 			#for the buffer to fill - more than half a day
  
         #do not putout an empty graph at the start of the day
         while len(readings_f) < 2:  ## get 2 readings for at least some kind of graph.
-            time.sleep(config["SAMPLE_PERIOD"])
+            time.sleep(get_config.config["SAMPLE_PERIOD"])
             reading_c, reading_f = get_reading(device_file)
             readings_f.append(reading_f)
             dates.append(datetime.datetime.today())
             
 
         last_plot_name = "/var/www/plot"+today_str+".png"
-        plotdata(dates, readings_f, last_plot_name)
+        plotdata(dates, readings_f, text_outfilename, last_plot_name)
         last_plot = time.time()
         #overwrites all day then goes on to new day
 
@@ -204,5 +227,5 @@ Median Temp was: %6.1f F """%(mint, maxt, mediant)
     temp = check_4_alert(reading_f)# check and potentialy send email after plot
       
     
-    time.sleep(config["SAMPLE_PERIOD"])
+    time.sleep(get_config.config["SAMPLE_PERIOD"])
 

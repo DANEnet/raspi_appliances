@@ -14,7 +14,7 @@ import os, sys, datetime
 import get_config
 import smtplib
 import mimetypes
-import gmail_password 
+import gmail_password
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
@@ -57,9 +57,9 @@ def sendMail(subject, text, attachmentFilePaths):
   print ("starting sendmail subject: ",subject)
   print ("\ttext: ", text)
   print ("\tAttachmentFilePaths:",attachmentFilePaths)
-  config = get_config.get_config()
+  config = get_config.config
   gmailUser = 'from_server@danenet.org'
-  recipient = config["recipient"]
+  recipient = get_config.config["recipient"]
   msg = MIMEMultipart()
   msg['From'] = gmailUser
   msg['To'] = recipient

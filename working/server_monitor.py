@@ -14,7 +14,7 @@ from display_LCD import *
 
 import send_email 
 import get_config
-import  Adafruit_CharLCD as LCD
+import RPi.GPIO as GPIO
 
 
 
@@ -131,7 +131,7 @@ for pin in [6]:
 	GPIO.setup(pin, GPIO.OUT)
 	GPIO.output(pin, GPIO.HIGH)
 
-
+time.sleep(10)
 
 readings_f = []
 dates = []

@@ -31,7 +31,8 @@ def plotdata(dates, readings_f, infilename, outfilename):
   print "in plotdata length readings_f: ", len(readings_f)
   print "in plotdata length      dates: ", len(dates)
 
-  
+  if len(readings_f) < 2: return  
+
   plt.plot_date(x=dates, y=readings_f, fmt="r-")
   plt.xticks(rotation=22)
   print "plottitle",dates[0], dates[-1]

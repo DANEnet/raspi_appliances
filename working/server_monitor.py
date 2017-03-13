@@ -152,9 +152,6 @@ while 1:
     output_str = "%s, %6.1f, %6.1f\n"%(time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
                                            reading_f, reading_c)
    
-    ## remove lcd.set_color(1.0, 1.0, 1.0)
-    ## remove lcd.clear()
-    ## remove lcd.message('%6.1f, %6.1f'%(reading_f, reading_c))
  
     print output_str
     OUTFILE.write(output_str)
@@ -211,11 +208,13 @@ Median Temp was: %6.1f F """%(mint, maxt, mediant)
 			#for the buffer to fill - more than half a day
  
         #do not putout an empty graph at the start of the day
-        while len(readings_f) < 2:  ## get 2 readings for at least some kind of graph.
-            time.sleep(get_config.config["SAMPLE_PERIOD"])
-            reading_c, reading_f = get_reading(device_file)
-            readings_f.append(reading_f)
-            dates.append(datetime.datetime.today())
+#  -------  Change so if plot has less than 2 readings just does not plot
+#
+#        while len(readings_f) < 2:  ## get 2 readings for at least some kind of graph.
+#            time.sleep(get_config.config["SAMPLE_PERIOD"])
+#            reading_c, reading_f = get_reading(device_file)
+#            readings_f.append(reading_f)
+#            dates.append(datetime.datetime.today())
             
 
         last_plot_name = "/var/www/plot"+today_str+".png"

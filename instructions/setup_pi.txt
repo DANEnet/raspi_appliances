@@ -81,6 +81,28 @@ apt-get install owfs ow-shell i2c-tools  # includes w1-therm
 #   device_tree_overlay=overlays/w1-gpio-pullup-overlay.dtb
 #  At least with the dtoverlay=w1-gpio,gpiopin=4
 
+# https://www.raspberrypi.org/forums/viewtopic.php?f=53&t=105315
+#dtoverlay=w1-gpio-pullup,gpiopin=x,pullup=y
+#dtoverlay=w1-gpio-pullup,gpiopin=4
+
+# best info on pullup is:
+# https://github.com/raspberrypi/firmware/issues/348
+# concludes internal pullup resisters too high and might not give enough current. 
+
+
+#import RPi.GPIO as GPIO
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(23, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+#GPIO.setup(24, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+##This will enable a pull-down resistor on pin 23, and a pull-up resistor on pin 24. 
+
+#https://raspberrypi.stackexchange.com/questions/13/how-can-i-use-the-gpio-pins-as-digital-outputs/1129#1129
+#The GPIO pins are 3.3 V, and the maximum current is 16 mA. That means you'll be unable to power almost anything directly. That's why you need to at least use a transistor switch, if not a more advanced protection circuit. You can read more about them in RPi Tutorial EGHS:GPIO Protection Circuits.
+
+#https://www.raspberrypi.org/documentation/configuration/device-tree.md
+#dtparam=gpio_out_pin=16=1
+#dtparam=gpio_out_value=1
+#dtparam=gpio_in_pull=down
 
 
 

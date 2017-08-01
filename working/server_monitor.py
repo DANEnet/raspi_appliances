@@ -131,7 +131,7 @@ for pin in [6]:
 	GPIO.setup(pin, GPIO.OUT)
 	GPIO.output(pin, GPIO.HIGH)
 
-time.sleep(10)
+time.sleep(30)
 
 readings_f = []
 dates = []

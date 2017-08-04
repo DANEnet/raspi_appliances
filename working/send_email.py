@@ -14,7 +14,7 @@ import os, sys, datetime
 import get_config
 import smtplib
 import mimetypes
-import gmail_password 
+import gmail_password
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.MIMEText import MIMEText
@@ -57,9 +57,9 @@ def sendMail(subject, text, attachmentFilePaths):
   print ("starting sendmail subject: ",subject)
   print ("\ttext: ", text)
   print ("\tAttachmentFilePaths:",attachmentFilePaths)
-  config = get_config.get_config()
+  config = get_config.config
   gmailUser = 'from_server@danenet.org'
-  recipient = config["recipient"]
+  recipient = get_config.config["recipient"]
   msg = MIMEMultipart()
   msg['From'] = gmailUser
   msg['To'] = recipient
@@ -69,6 +69,7 @@ def sendMail(subject, text, attachmentFilePaths):
     for attachmentFilePath in attachmentFilePaths:
       msg.attach(getAttachment(attachmentFilePath))
 
+<<<<<<< HEAD
   try:
     mailServer = smtplib.SMTP_SSL()
     #mailServer.set_debuglevel(9)
@@ -76,6 +77,15 @@ def sendMail(subject, text, attachmentFilePaths):
   except:
     print "failed email"
     return
+=======
+  mailServer = smtplib.SMTP_SSL()
+  #mailServer.set_debuglevel(9)
+  try:
+	mailServer.connect("smtp.gmail.com", 465)
+  except:
+	print("Error unable to connect to mailServer")
+	return
+>>>>>>> 1732bb92c44d364c8f7f2f0582d64f723e5242d5
   #try:
   #    mailServer = smtplib.SMTP('ASPMX.L.GOOGLE.COM', 587)
   #except:
@@ -91,13 +101,17 @@ def sendMail(subject, text, attachmentFilePaths):
   #      when the fallback is to try to make a IP6 connection
   #    """)
 
-  mailServer.ehlo()
-  #mailServer.starttls()
-  #mailServer.ehlo()
-  mailServer.login(gmailUser, gmail_password.gmail_password())
-  mailServer.sendmail(gmailUser, recipient, msg.as_string())
+  try:
+    mailServer.ehlo()
+    #mailServer.starttls()
+    #mailServer.ehlo()
+    mailServer.login(gmailUser, gmail_password.gmail_password())
+    mailServer.sendmail(gmailUser, recipient, msg.as_string())
+  except: 
+    err = sys.exc_info()[0]
+    print('Failure in sending email to %s \n %s' % (recipient, err))
   mailServer.close()
-  print('Success?? Sent email to %s' % recipient)
+  
 
 
 if __name__ == "__main__":  

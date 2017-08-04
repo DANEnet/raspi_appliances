@@ -69,10 +69,13 @@ def sendMail(subject, text, attachmentFilePaths):
     for attachmentFilePath in attachmentFilePaths:
       msg.attach(getAttachment(attachmentFilePath))
 
-  mailServer = smtplib.SMTP_SSL()
-  #mailServer.set_debuglevel(9)
-  mailServer.connect("smtp.gmail.com", 465)
-  
+  try:
+    mailServer = smtplib.SMTP_SSL()
+    #mailServer.set_debuglevel(9)
+    mailServer.connect("smtp.gmail.com", 465)
+  except:
+    print "failed email"
+    return
   #try:
   #    mailServer = smtplib.SMTP('ASPMX.L.GOOGLE.COM', 587)
   #except:

@@ -69,15 +69,6 @@ def sendMail(subject, text, attachmentFilePaths):
     for attachmentFilePath in attachmentFilePaths:
       msg.attach(getAttachment(attachmentFilePath))
 
-<<<<<<< HEAD
-  try:
-    mailServer = smtplib.SMTP_SSL()
-    #mailServer.set_debuglevel(9)
-    mailServer.connect("smtp.gmail.com", 465)
-  except:
-    print "failed email"
-    return
-=======
   mailServer = smtplib.SMTP_SSL()
   #mailServer.set_debuglevel(9)
   try:
@@ -85,7 +76,6 @@ def sendMail(subject, text, attachmentFilePaths):
   except:
 	print("Error unable to connect to mailServer")
 	return
->>>>>>> 1732bb92c44d364c8f7f2f0582d64f723e5242d5
   #try:
   #    mailServer = smtplib.SMTP('ASPMX.L.GOOGLE.COM', 587)
   #except:

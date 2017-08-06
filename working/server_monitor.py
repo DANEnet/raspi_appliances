@@ -21,8 +21,9 @@ import RPi.GPIO as GPIO
 #####config_dict = get_config.get_config()
 ## see:  https://docs.python.org/2/faq/programming.html?highlight=global%20variables#how-do-i-share-global-variables-across-modules
 
-device_folder = glob.glob('/sys/bus/w1/devices/28*')
-device_file = device_folder[0] + '/w1_slave'
+#define after setting pin 6 high
+#device_folder = glob.glob('/sys/bus/w1/devices/28*')
+#device_file = device_folder[0] + '/w1_slave'
 
 def get_reading(device_file):
     reading_c = read_1wire_temp(device_file) #get the temp
@@ -105,6 +106,15 @@ def check_4_alert(reading_in_f ): #This is an iterator so dates preserve between
 # this is the top of the real program with setup
 ######################################
 
+
+GPIO.setmode(GPIO.BCM)
+for pin in [6]:
+	print "Setting pin ",pin, " high"
+	GPIO.setup(pin, GPIO.OUT)
+	GPIO.output(pin, GPIO.HIGH)
+print "sleeping"
+time.sleep(30)
+
 device_folder = glob.glob('/sys/bus/w1/devices/28*')
 device_file = device_folder[0] + '/w1_slave'
 ##remove lcd = LCD.Adafruit_CharLCDPlate()
@@ -125,13 +135,6 @@ today_str=time.strftime("%Y-%m-%d", time.localtime())
 text_outfilename="/var/www/readings"+today_str+".csv"
 last_plot_name = "/var/www/plot"+today_str+".png"
 
-GPIO.setmode(GPIO.BCM)
-for pin in [6]:
-	print "Setting pin ",pin, " high"
-	GPIO.setup(pin, GPIO.OUT)
-	GPIO.output(pin, GPIO.HIGH)
-
-time.sleep(30)
 
 readings_f = []
 dates = []

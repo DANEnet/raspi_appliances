@@ -128,7 +128,7 @@ dtoverlay=w1-gpio,gpiopin=19
 
 # for moving the onewire pin
 # add to /boot/config.txt
-# bcm2708.w1_gpio_pin=8
+# bcm2708.w1_gpio_pin=8  ##2017-08-03 this is not on the working CSCI config.txt
 # as well as changing the dtoverlay pin
 
 =======
@@ -166,3 +166,15 @@ dtoverlay=w1-gpio,gpiopin=19
 #  return "password goes here"
 
 #
+
+####################################################
+2017-08-03 here is the setup with the LCD pannels
+See config.txt in instructions it has both i2c on (LCD pannel)
+In server_monitor.py 
+Pin  6 (gpio 31)is set high to power the temp probe
+Pin 19 (gpio 35)is set to be the 1wire pin
+Ground is gpio 39
+	So every other pin from the bottom inside
+
+
+

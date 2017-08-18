@@ -35,10 +35,13 @@ def plotdata(dates, readings_f, infilename, outfilename):
 
   plt.plot_date(x=dates, y=readings_f, fmt="r-")
   plt.xticks(rotation=22)
+  myfmt = mdates.DateFormatter("%H:%M")
+  plt.gcf().axes[0].xaxis.set_major_formatter(myfmt) 
+  
   print "plottitle",dates[0], dates[-1]
   plt.title("Time vs Temp "+ get_config.config["serverLocation"] + "\nCovers "+
-            dates[0].strftime("%Y-%m-%d %H:%M:%S ")+" to "+
-            dates[-1].strftime("%Y-%m-%d %H:%M:%S"))
+            dates[0].strftime("%Y-%m-%d %H:%M ")+" to "+
+            dates[-1].strftime("%Y-%m-%d %H:%M"))
  
   plt.ylabel("Temp (F)")
   plt.grid(True)

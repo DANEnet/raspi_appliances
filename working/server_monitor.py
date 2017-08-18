@@ -114,6 +114,7 @@ for pin in [6]:
 	GPIO.output(pin, GPIO.HIGH)
 print "sleeping"
 time.sleep(30)
+print "not sleeping"
 
 device_folder = glob.glob('/sys/bus/w1/devices/28*')
 device_file = device_folder[0] + '/w1_slave'
@@ -221,7 +222,7 @@ Median Temp was: %6.1f F """%(mint, maxt, mediant)
             
 
         last_plot_name = "/var/www/plot"+today_str+".png"
-        plotdata(dates, readings_f, text_outfilename, last_plot_name)
+        plotdata(dates, readings_f, text_outfilename, last_plot_name) # last_plot_name is the output file name
         last_plot = time.time()
         #overwrites all day then goes on to new day
 

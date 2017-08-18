@@ -178,3 +178,21 @@ Ground is gpio 39
 
 
 
+##################################################333
+
+Document Roots
+	By default, Debian does not allow access through the web browser 
+	to any file apart of those located in /var/www, public_html directories 
+	(when enabled) and /usr/share (for web applications). If your site is 
+	using a web document root located elsewhere (such as in /srv) you may 
+	need to whitelist your document root directory in /etc/apache2/apache2.conf.
+
+Look at the file in the instructions directory
+000-default.conf and place it in
+/etc/apache2/sites-available/
+
+Also remove the var/www/html folder and the included file
+
+
+####################################################33
+
